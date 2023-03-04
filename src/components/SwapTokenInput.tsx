@@ -257,13 +257,13 @@ function ListItem({
   const theme = useTheme()
   const { t } = useTranslation()
   const isVirtualSwap = (
-    [
+    ([
       SWAP_TYPES.SYNTH_TO_SYNTH,
       SWAP_TYPES.SYNTH_TO_TOKEN,
       SWAP_TYPES.TOKEN_TO_SYNTH,
       SWAP_TYPES.TOKEN_TO_TOKEN,
-    ] as Array<SWAP_TYPES | null>
-  ).includes(swapType)
+    ] as Array<SWAP_TYPES | null>) || []
+  )?.includes(swapType)
   return (
     <li
       {...listItemProps}

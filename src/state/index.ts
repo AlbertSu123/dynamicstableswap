@@ -20,7 +20,7 @@ const store = configureStore({
       thunk: false,
       serializableCheck: {
         ignoredPaths: Object.keys(reducer).filter(
-          (k) => !PERSISTED_KEYS.includes(k),
+          (k) => !PERSISTED_KEYS?.includes(k),
         ),
       },
     }),

@@ -132,15 +132,7 @@ function PoolInfoCard({ data }: Props): ReactElement | null {
           const apr = formattedData.aprs[key]?.apr
           return formattedData.aprs[key]?.apr.gt(Zero) ? (
             <InfoItem key={symbol}>
-              {symbol.includes("/") ? (
-                <Tooltip title={symbol.replaceAll("/", "\n")}>
-                  <Typography sx={{ borderBottom: "1px dotted" }}>
-                    Reward APR:
-                  </Typography>
-                </Tooltip>
-              ) : (
-                <Typography>{`${symbol} APR:`}</Typography>
-              )}
+              {<Typography>{`${symbol} APR:`}</Typography>}
               <Typography variant="subtitle1">
                 {apr && formatBNToPercentString(apr, 18)}
               </Typography>

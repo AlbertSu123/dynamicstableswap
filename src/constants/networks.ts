@@ -9,6 +9,7 @@ export const NETWORK_LABEL: Partial<Record<ChainId, string>> = {
   [ChainId.NEON]: "NEON",
   [ChainId.SCROLL]: "ETH",
   [ChainId.SEPOLIA]: "ETH",
+  [ChainId.METIS]: "ETH",
 }
 
 // TODO: figure out better way of representing non-erc20 native tokens
@@ -28,6 +29,7 @@ export const NETWORK_NATIVE_TOKENS: Record<ChainId, string> = {
   [ChainId.EVMOS_TESTNET]: "tEVMOS",
   [ChainId.KAVA_TESTNET]: "KAVA",
   [ChainId.HARDHAT]: "ETH",
+  [ChainId.METIS]: "ETH",
 }
 
 export type SupportedNetworks = {
@@ -89,6 +91,17 @@ export const SUPPORTED_NETWORKS: SupportedNetworks = {
     },
     rpcUrls: ["https://rpc.testnet.mantle.xyz"],
     blockExplorerUrls: ["https://evm.evmos.dev"],
+  },
+  [ChainId.METIS]: {
+    chainId: "0x257",
+    chainName: "Metis Testnet",
+    nativeCurrency: {
+      name: "ETH",
+      symbol: "eth",
+      decimals: 18,
+    },
+    rpcUrls: ["https://goerli.gateway.metisdevops.link"],
+    blockExplorerUrls: ["https://goerli.explorer.metisdevops.link/"],
   },
   [ChainId.NEON]: {
     chainId: "0xE9AC0CE",

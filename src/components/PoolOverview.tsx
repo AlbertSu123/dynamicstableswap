@@ -195,18 +195,7 @@ export default function PoolOverview({
             const symbol = poolData.aprs[key]?.symbol as string
             return poolData.aprs[key]?.apr.gt(Zero) ? (
               <div key={symbol}>
-                {symbol.includes("/") ? (
-                  <Tooltip title={symbol.replaceAll("/", "\n")}>
-                    <Typography
-                      component="span"
-                      sx={{ borderBottom: "1px dotted" }}
-                    >
-                      Reward APR:
-                    </Typography>
-                  </Tooltip>
-                ) : (
-                  <Typography component="span">{symbol} APR:</Typography>
-                )}
+                {<Typography component="span">{symbol} APR:</Typography>}
                 <Typography component="span" marginLeft={1}>
                   {formattedData.aprs[key] as string}
                 </Typography>

@@ -196,7 +196,7 @@ describe("getTokenIconPath", () => {
   it("correctly retrieves icon path for non-saddle tokens", () => {
     Object.keys(TOKENS_MAP).forEach((tokenSymbol) => {
       const castedSymbol = <string>tokenSymbol
-      if (!castedSymbol.toLowerCase().includes("saddle")) {
+      if (!castedSymbol?.toLowerCase().includes("saddle")) {
         expect(getTokenIconPath(castedSymbol)).toEqual(
           `/static/icons/svg/${castedSymbol.toLowerCase()}.svg`,
         )
@@ -206,7 +206,7 @@ describe("getTokenIconPath", () => {
   it("correctly retrieves icon path for saddle tokens", () => {
     Object.keys(TOKENS_MAP).forEach((tokenSymbol) => {
       const castedSymbol = <string>tokenSymbol
-      if (castedSymbol.toLowerCase().includes("saddle")) {
+      if (castedSymbol?.toLowerCase()?.includes("saddle")) {
         expect(getTokenIconPath(castedSymbol)).toEqual(
           `/static/icons/svg/saddle_lp_token.svg`,
         )

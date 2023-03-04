@@ -131,6 +131,7 @@ export enum ChainId {
   EVMOS = 9001,
   EVMOS_TESTNET = 9000,
   KAVA_TESTNET = 2221,
+  METIS = 599,
 }
 
 export const VisibleChainIds = new Set<ChainId>([
@@ -464,7 +465,7 @@ export function getIsLegacySwapABIPoolByAddress(
     STABLECOIN_POOL_NAME,
     VETH2_POOL_NAME,
   ].map((name) => POOLS_MAP[name].addresses[chainId])
-  return legacyAddresses.includes(poolAddress)
+  return legacyAddresses?.includes(poolAddress)
 }
 export function isLegacySwapABIPool(poolName: string): boolean {
   return new Set([BTC_POOL_NAME, STABLECOIN_POOL_NAME, VETH2_POOL_NAME]).has(

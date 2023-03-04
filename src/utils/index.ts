@@ -378,40 +378,9 @@ export async function getMulticallProvider(
  * @returns the token icon path within the public assets directory
  */
 export function getTokenIconPath(tokenSymbol: string): string {
-  const iconName = tokenSymbol.toLowerCase().includes("kinesis")
+  const iconName = tokenSymbol.toLowerCase()?.includes("kinesis")
     ? "kinesis_lp_token"
     : tokenSymbol.toLowerCase()
-  if (iconName.includes("axlusdc")) {
-    return "/static/icons/png/axlusdc.png"
-  } else if (iconName.includes("axldai")) {
-    return "/static/icons/png/axldai.png"
-  } else if (iconName.includes("axlusdt")) {
-    return "/static/icons/png/axlusdt.png"
-  } else if (iconName.includes("ceusdc")) {
-    return "/static/icons/png/ceusdc.png"
-  } else if (iconName.includes("ceusdt")) {
-    return "/static/icons/png/ceusdt.png"
-  } else if (iconName.includes("cedai")) {
-    return "/static/icons/png/cedai.png"
-  } else if (iconName.includes("g-dai")) {
-    return "/static/icons/png/gdai.png"
-  } else if (iconName.includes("g-usdc")) {
-    return "/static/icons/png/gusdc.png"
-  } else if (iconName.includes("g-usdt")) {
-    return "/static/icons/png/gusdt.png"
-  } else if (iconName.includes("madusdt")) {
-    return "/static/icons/png/madusdt.png"
-  } else if (iconName.includes("madusdc")) {
-    return "/static/icons/png/madusdc.png"
-  } else if (iconName == "kinesis_lp_token") {
-    return "/static/icons/png/kinesis_lp_token.png"
-  } else if (iconName == "ibc g-dai" || iconName == "gdai") {
-    return "/static/icons/png/GDAI.png"
-  } else if (iconName == "ibc g-usdc" || iconName == "gusdc") {
-    return "/static/icons/png/GUSDC.png"
-  } else if (iconName == "ibc g-usdt" || iconName == "gusdt") {
-    return "/static/icons/png/GUSDT.png"
-  }
 
   const pngSet = new Set<string>(["UST"])
   return pngSet.has(tokenSymbol)

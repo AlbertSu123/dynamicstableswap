@@ -181,7 +181,7 @@ export default function CreatePool(): React.ReactElement {
       poolSymbolError ||
       aParameterError ||
       feeError ||
-      tokenInfoErrors.includes("error")
+      tokenInfoErrors?.includes("error")
     const hasAllValues =
       poolName.length > 0 &&
       poolSymbol.length > 0 &&
