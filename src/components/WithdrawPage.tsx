@@ -1,0 +1,373 @@
+import {
+  Box,
+  Button,
+  Container,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+  TextField,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material"
+import { PoolDataType, UserShareType } from "../hooks/usePoolData"
+import React, { ReactElement, useState } from "react"
+
+import AdvancedOptions from "./AdvancedOptions"
+import { AppState } from "../state"
+import { BigNumber } from "@ethersproject/bignumber"
+import ConfirmTransaction from "./ConfirmTransaction"
+import Dialog from "./Dialog"
+import GradientBox from "../components/GradientBox"
+import MyFarm from "./MyFarm"
+import MyShareCard from "./MyShareCard"
+import PoolInfoCard from "./PoolInfoCard"
+import ReviewWithdraw from "./ReviewWithdraw"
+import TokenInput from "./TokenInput"
+import { WithdrawFormState } from "../hooks/useWithdrawFormState"
+import { Zero } from "@ethersproject/constants"
+import { formatBNToPercentString } from "../utils"
+import { logEvent } from "../utils/googleAnalytics"
+import { useSelector } from "react-redux"
+import { useTranslation } from "react-i18next"
+
+export interface ReviewWithdrawData {
+  withdraw: {
+    name: string
+    symbol: string
+    value: string
+  }[]
+  rates: {
+    name: string
+    value: string
+    rate: string
+  }[]
+  slippage: string
+  priceImpact: BigNumber
+  totalAmount?: string
+  withdrawLPTokenAmount: BigNumber
+  txnGasCost: {
+    amount: BigNumber
+    valueUSD: BigNumber | null // amount * ethPriceUSD
+  }
+}
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+interface Props {
+  title: string
+  tokensData: Array<{
+    symbol: string
+    name: string
+    decimals: number
+    priceUSD: number
+    inputValue: string
+  }>
+  reviewData: ReviewWithdrawData
+  selected?: { [key: string]: any }
+  poolData: PoolDataType | null
+  myShareData: UserShareType | null
+  formStateData: WithdrawFormState
+  onFormChange: (action: any) => void
+  onConfirmTransaction: () => Promise<void>
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+const WithdrawPage = (props: Props): ReactElement => {
+  const { t } = useTranslation()
+  const {
+    tokensData,
+    poolData,
+    myShareData,
+    onFormChange,
+    formStateData,
+    reviewData,
+    onConfirmTransaction,
+  } = props
+
+  const { gasPriceSelected } = useSelector((state: AppState) => state.user)
+  const [currentModal, setCurrentModal] = useState<string | null>(null)
+  const theme = useTheme()
+  const isLgDown = useMediaQuery(theme.breakpoints.down("lg"))
+
+  const onSubmit = (): void => {
+    setCurrentModal("review")
+  }
+  const handleWithdrawChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onFormChange({
+      fieldName: "withdrawType",
+      value: event.target.value,
+    })
+  }
+  const noShare = !myShareData || myShareData.lpTokenBalance.eq(Zero)
+
+  return (
+    <Container maxWidth={isLgDown ? "sm" : "lg"} sx={{ py: 5 }}>
+      <Stack
+        direction={{ xs: "column", lg: "row" }}
+        spacing={4}
+        alignItems={{ xs: "center", lg: "flex-start" }}
+      >
+        {/*<<<<<<< HEAD*/}
+        <GradientBox
+          paperProps={{
+            sx: {
+              flexBasis: "50%",
+            },
+          }}
+          boxProps={{ p: 4 }}
+        >
+          <Typography variant="h1" marginBottom={3}>
+            {t("withdraw")}
+          </Typography>
+          <Box display="flex">
+            <Box>
+              <Typography variant="body1" noWrap>{`${t(
+                "withdrawPercentage",
+              )} (%):`}</Typography>
+            </Box>
+            <TextField
+              placeholder="0"
+              size="small"
+              data-testid="withdrawPercentageInput"
+              onChange={(e): void =>
+                onFormChange({
+                  fieldName: "percentage",
+                  value: e.currentTarget.value,
+                })
+              }
+              value={formStateData.percentage ? formStateData.percentage : ""}
+            />
+          </Box>
+          <Box textAlign="end" minHeight="24px">
+            <Typography color="error">
+              {formStateData.error?.message || ""}
+            </Typography>
+          </Box>
+          <RadioGroup
+            row
+            value={formStateData.withdrawType}
+            onChange={handleWithdrawChange}
+            sx={{ mb: 2 }}
+          >
+            <FormControlLabel
+              value="ALL"
+              control={<Radio />}
+              label="Combo"
+              data-testid="withdrawPercentageCombo"
+            />
+            {tokensData.map((t) => {
+              return (
+                // =======
+                //         <Box flex={1} justifyContent="center" alignItems="center">
+                //           <Paper>
+                //             <Box p={4}>
+                //               <Typography variant="h1" marginBottom={3}>
+                //                 {t("withdraw")}
+                //               </Typography>
+                //               <Box display="flex">
+                //                 <Box>
+                //                   <Typography variant="body1" noWrap mr={1}>{`${t(
+                //                     "withdrawPercentage",
+                //                   )} (%):`}</Typography>
+                //                 </Box>
+                //                 <TextField
+                //                   placeholder="0"
+                //                   size="small"
+                //                   data-testid="withdrawPercentageInput"
+                //                   onChange={(e): void => {
+                //                     if (
+                //                       e.target.value.trim() === "" ||
+                //                       readableDecimalNumberRegex.test(e.target.value)
+                //                     )
+                //                       onFormChange({
+                //                         fieldName: "percentage",
+                //                         value: e.currentTarget.value.trim(),
+                //                       })
+                //                   }}
+                //                   value={
+                //                     formStateData.percentage ? formStateData.percentage : ""
+                //                   }
+                //                 />
+                //               </Box>
+                //               <Box textAlign="end" minHeight="24px">
+                //                 <Typography color="error">
+                //                   {formStateData.error?.message || ""}
+                //                 </Typography>
+                //               </Box>
+                //               <RadioGroup
+                //                 row
+                //                 value={formStateData.withdrawType}
+                //                 onChange={handleWithdrawChange}
+                //                 sx={{ mb: 2 }}
+                //               >
+                // >>>>>>> main
+                <FormControlLabel
+                  key={t.symbol}
+                  control={<Radio />}
+                  value={t.symbol}
+                  disabled={poolData?.isPaused}
+                  label={t.name}
+                  data-testid="withdrawTokenRadio"
+                />
+                /*<<<<<<< HEAD*/
+              )
+            })}
+          </RadioGroup>
+          <Stack spacing={3}>
+            {tokensData.map(
+              ({ decimals, symbol, name, priceUSD, inputValue }, index) => (
+                <TokenInput
+                  key={index}
+                  token={{
+                    decimals,
+                    symbol,
+                    name,
+                    priceUSD,
+                  }}
+                  inputValue={inputValue}
+                  onChange={(value): void =>
+                    onFormChange({
+                      fieldName: "tokenInputs",
+                      value: value,
+                      tokenSymbol: symbol,
+                    })
+                  }
+                />
+              ),
+            )}
+          </Stack>
+          <Box mt={3}>
+            {reviewData.priceImpact.gte(0) ? (
+              <Typography component="span" color="primary">
+                {t("bonus")}:{" "}
+              </Typography>
+            ) : (
+              <Typography component="span" color="error" whiteSpace="nowrap">
+                {t("priceImpact")}
+              </Typography>
+            )}
+            <Typography
+              component="span"
+              color={reviewData.priceImpact.gte(0) ? "primary" : "error"}
+            >
+              {formatBNToPercentString(reviewData.priceImpact, 18, 4)}
+            </Typography>
+          </Box>
+          {/*=======*/}
+          {/*                {tokensData.map((t) => {*/}
+          {/*                  return (*/}
+          {/*                    <FormControlLabel*/}
+          {/*                      key={t.symbol}*/}
+          {/*                      control={<Radio />}*/}
+          {/*                      value={t.symbol}*/}
+          {/*                      // disabled={poolData?.isPaused}*/}
+          {/*                      label={t.name}*/}
+          {/*                      data-testid="withdrawTokenRadio"*/}
+          {/*                    />*/}
+          {/*                  )*/}
+          {/*                })}*/}
+          {/*              </RadioGroup>*/}
+          {/*              <Stack spacing={3}>*/}
+          {/*                {tokensData.map((token, index) => (*/}
+          {/*                  <TokenInput*/}
+          {/*                    key={`tokenInput-${index}`}*/}
+          {/*                    {...token}*/}
+          {/*                    onChange={(value): void =>*/}
+          {/*                      onFormChange({*/}
+          {/*                        fieldName: "tokenInputs",*/}
+          {/*                        value: value,*/}
+          {/*                        tokenSymbol: token.symbol,*/}
+          {/*                      })*/}
+          {/*                    }*/}
+          {/*                    // disabled={poolData?.isPaused}*/}
+          {/*                  />*/}
+          {/*                ))}*/}
+          {/*              </Stack>*/}
+          {/*              <Box mt={3}>*/}
+          {/*                {reviewData.priceImpact.gte(0) ? (*/}
+          {/*                  <Typography component="span" color="primary" marginRight={1}>*/}
+          {/*                    {t("bonus")}:*/}
+          {/*                  </Typography>*/}
+          {/*                ) : (*/}
+          {/*                  <Typography*/}
+          {/*                    component="span"*/}
+          {/*                    color="error"*/}
+          {/*                    whiteSpace="nowrap"*/}
+          {/*                    marginRight={1}*/}
+          {/*                  >*/}
+          {/*                    {t("priceImpact")}:*/}
+          {/*                  </Typography>*/}
+          {/*                )}*/}
+          {/*                <Typography*/}
+          {/*                  component="span"*/}
+          {/*                  color={reviewData.priceImpact.gte(0) ? "primary" : "error"}*/}
+          {/*                >*/}
+          {/*                  {formatBNToPercentString(reviewData.priceImpact, 18, 4)}*/}
+          {/*                </Typography>*/}
+          {/*              </Box>*/}
+          {/*            </Box>*/}
+          {/*          </Paper>*/}
+          {/*>>>>>>> main*/}
+          <AdvancedOptions />
+          <Button
+            variant="contained"
+            size="large"
+            fullWidth
+            data-testid="withdrawBtn"
+            disabled={
+              noShare ||
+              !!formStateData.error ||
+              formStateData.lpTokenAmountToSpend.isZero()
+            }
+            onClick={onSubmit}
+            sx={{ mt: 4 }}
+          >
+            {t("withdraw")}
+          </Button>
+        </GradientBox>
+        <Stack direction="column" flex={1} spacing={4}>
+          {poolData && (
+            <MyFarm
+              lpWalletBalance={myShareData?.lpTokenBalance || Zero}
+              poolName={poolData.name}
+            />
+          )}
+          <GradientBox
+            paperProps={{ sx: { flexBasis: "50%" } }}
+            boxProps={{ p: 4 }}
+          >
+            <MyShareCard data={myShareData} />
+            <PoolInfoCard data={poolData} />
+          </GradientBox>
+        </Stack>
+      </Stack>
+
+      <Dialog
+        open={!!currentModal}
+        maxWidth="xs"
+        fullWidth
+        onClose={(): void => setCurrentModal(null)}
+        scroll="body"
+        hideClose={currentModal === "confirm"}
+      >
+        {currentModal === "review" ? (
+          <ReviewWithdraw
+            data={reviewData}
+            gas={gasPriceSelected}
+            onConfirm={async (): Promise<void> => {
+              setCurrentModal("confirm")
+              logEvent("withdraw", (poolData && { pool: poolData?.name }) || {})
+              await onConfirmTransaction?.()
+              setCurrentModal(null)
+            }}
+            onClose={(): void => setCurrentModal(null)}
+          />
+        ) : null}
+        {currentModal === "confirm" ? <ConfirmTransaction /> : null}
+      </Dialog>
+    </Container>
+  )
+}
+
+export default WithdrawPage
